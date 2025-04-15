@@ -1,6 +1,5 @@
-import datetime
 from forms.user import RegisterForm
-from flask import Flask, render_template, request, make_response, session
+from flask import Flask, render_template, request, make_response, session, flash, url_for
 from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
 from wtforms import StringField, PasswordField, SubmitField
@@ -11,6 +10,8 @@ from data import db_session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = '123'
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -47,8 +48,9 @@ def login():
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
 
+
 @app.route('/register', methods=['GET', 'POST'])
-def reqister():
+def register():
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
