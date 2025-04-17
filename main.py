@@ -25,7 +25,17 @@ class LoginForm(FlaskForm):
 
 @app.route('/')
 def index():
-    return render_template("base.html")
+    return render_template("index.html")
+
+
+@app.route('/news')
+def news():
+    return render_template("news.html")
+
+
+@app.route('/charts')
+def charts():
+    return render_template("charts.html")
 
 
 @login_manager.user_loader
@@ -44,8 +54,8 @@ def login():
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
         return render_template('login.html',
-                               message="Неправильный логин или пароль",
-                               form=form)
+                             message="Неправильный логин или пароль",
+                             form=form)
     return render_template('login.html', title='Авторизация', form=form)
 
 
@@ -55,13 +65,13 @@ def register():
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Пароли не совпадают")
+                                 form=form,
+                                 message="Пароли не совпадают")
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Такой пользователь уже есть")
+                                 form=form,
+                                 message="Такой пользователь уже есть")
         user = User(
             name=form.name.data,
             email=form.email.data,
