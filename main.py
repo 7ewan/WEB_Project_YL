@@ -1,3 +1,5 @@
+from data.songs import Song
+from forms.song import SongForm
 from forms.user import RegisterForm
 from flask import Flask, render_template, request, make_response, session, flash, url_for
 from flask_wtf import FlaskForm
@@ -11,6 +13,12 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123'
+
+@app.context_processor
+def inject_user():
+    from flask_login import current_user
+    return dict(current_user=current_user)
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -89,6 +97,24 @@ def register():
 def logout():
     logout_user()
     return redirect("/")
+
+@app.route('/add_song', methods=['GET', 'POST'])
+@login_required
+def add_song():
+    form = SongForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        song = Song(
+            title=form.title.data,
+            artist=form.artist.data,
+            lyrics=form.lyrics.data,
+            user_id=current_user.id
+        )
+        db_sess.add(song)
+        db_sess.commit()
+        flash('Песня добавлена!', 'success')
+        return redirect('/')
+    return render_template('add_song.html', title='Добавить песню', form=form)
 
 
 if __name__ == '__main__':
