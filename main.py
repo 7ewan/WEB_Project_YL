@@ -14,6 +14,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123'
 
+
 @app.context_processor
 def inject_user():
     from flask_login import current_user
@@ -62,8 +63,8 @@ def login():
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
         return render_template('login.html',
-                             message="Неправильный логин или пароль",
-                             form=form)
+                               message="Неправильный логин или пароль",
+                               form=form)
     return render_template('login.html', title='Авторизация', form=form)
 
 
@@ -73,13 +74,13 @@ def register():
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация',
-                                 form=form,
-                                 message="Пароли не совпадают")
+                                   form=form,
+                                   message="Пароли не совпадают")
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', title='Регистрация',
-                                 form=form,
-                                 message="Такой пользователь уже есть")
+                                   form=form,
+                                   message="Такой пользователь уже есть")
         user = User(
             name=form.name.data,
             email=form.email.data,
@@ -98,6 +99,7 @@ def logout():
     logout_user()
     return redirect("/")
 
+
 @app.route('/add_song', methods=['GET', 'POST'])
 @login_required
 def add_song():
@@ -115,6 +117,31 @@ def add_song():
         flash('Песня добавлена!', 'success')
         return redirect('/')
     return render_template('add_song.html', title='Добавить песню', form=form)
+
+
+@app.route('/song/<int:song_id>')
+def song(song_id):
+    db_sess = db_session.create_session()
+    song = db_sess.query(Song).get(song_id)
+    if not song:
+        flash('Песня не найдена', 'danger')
+        return redirect('/')
+    return render_template('song.html', song=song)
+
+
+@app.route('/search')
+def search():
+    query = request.args.get('q', '').strip()
+    if not query:
+        return redirect('/')
+
+    db_sess = db_session.create_session()
+    songs = db_sess.query(Song).filter(
+        (Song.title.ilike(f'%{query}%')) |
+        (Song.artist.ilike(f'%{query}%'))
+    ).all()
+
+    return render_template('search_results.html', songs=songs, query=query)
 
 
 if __name__ == '__main__':

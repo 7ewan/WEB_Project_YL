@@ -62,7 +62,10 @@
             left: 15px;
             top: 15px;
             z-index: 100;
-            width: 200px;
+            width: 300px;
+        }
+        .search-box .input-group {
+            width: 100%;
         }
         .new-releases {
             margin-top: 30px;
@@ -86,13 +89,24 @@
             color: #aaa;
             font-size: 0.9em;
         }
+        .lyrics {
+            white-space: pre-line;
+            font-family: monospace;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg bg-body-tertiary p-0">
     <div class="container-fluid p-0">
         <div class="search-box">
-            <input type="text" class="form-control" placeholder="Поиск...">
+            <form action="{{ url_for('search') }}" method="get">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="q" placeholder="Поиск..." value="{{ request.args.get('q', '') }}">
+                    <button class="btn btn-outline-light" type="submit">Найти</button>
+                </div>
+            </form>
         </div>
 
         {% if not current_user.is_authenticated %}

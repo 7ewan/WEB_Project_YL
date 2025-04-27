@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Результаты поиска для "{{ query }}"</h2>
+    {% if songs %}
+        <div class="list-group mt-3">
+            {% for song in songs %}
+                <a href="{{ url_for('song', song_id=song.id) }}" class="list-group-item list-group-item-action">
+                    {{ song.title }} - {{ song.artist }}
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-3">Ничего не найдено</div>
+    {% endif %}
+</div>
+{% endblock %}
