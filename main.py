@@ -1,3 +1,5 @@
+
+import sqlite3
 from data.songs import Song
 from forms.song import SongForm
 from forms.user import RegisterForm
@@ -32,9 +34,21 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Войти')
 
 
+def get_songs():
+    con = sqlite3.connect('db/users.db')
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    cur.execute("SELECT title, artist FROM songs")
+    songs = cur.fetchall()
+    con.close()
+    return songs
+
 @app.route('/')
 def index():
-    return render_template("index.html")
+    songs = get_songs()
+    return render_template('index.html', title='Главная страница', songs=songs)
+
+
 
 
 @app.route('/news')
