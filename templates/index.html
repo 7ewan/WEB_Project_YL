@@ -12,16 +12,25 @@
     <div class="row">
         {% if songs %}
             {% for song in songs %}
-                <div class="col-md-4">
-                    <div class="track-card">
-                        <div class="track-title">{{ song.title }}</div>
-                        <div class="track-artist">{{ song.artist }}</div>
-                    </div>
+                <div class="col-md-4 mb-4">
+                    <a href="{{ url_for('song', song_id=song.id) }}" class="song-link">
+                        <div class="track-card">
+                            <div class="track-title">{{ song.title }}</div>
+                            <div class="track-artist">{{ song.artist }}</div>
+                            {% if song.created_date %}
+                            <div class="track-date">Добавлено: {{ song.created_date.strftime('%d.%m.%Y') }}</div>
+                            {% endif %}
+                        </div>
+                    </a>
                 </div>
             {% endfor %}
         {% else %}
             <p class="text-center">Пока нет загруженных песен.</p>
         {% endif %}
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ url_for('all_songs') }}" class="btn btn-outline-light">Все песни</a>
     </div>
 </div>
 {% endblock %}
