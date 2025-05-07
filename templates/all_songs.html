@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4">Все песни</h2>
+    <div class="row">
+        {% for song in songs %}
+        <div class="col-md-4 song-card-container mb-4">
+            <a href="{{ url_for('song', song_id=song.id) }}" class="song-link">
+                <div class="track-card">
+                    <div class="track-title">{{ song.title }}</div>
+                    <div class="track-artist">{{ song.artist }}</div>
+                    {% if song.created_date %}
+                    <div class="track-date">Добавлено: {{ song.created_date.strftime('%d.%m.%Y') }}</div>
+                    {% endif %}
+                </div>
+            </a>
+        </div>
+        {% else %}
+        <p class="text-center">Пока нет загруженных песен.</p>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+        <a href="{{ url_for('index') }}" class="btn btn-outline-light">На главную</a>
+    </div>
+</div>
+{% endblock %}

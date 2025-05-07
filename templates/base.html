@@ -138,8 +138,53 @@
             line-height: 1.8;
             font-size: 1.1rem;
         }
-        .song-header, .lyrics-container {
-            transition: all 0.3s ease;
+
+        .annotations {
+            margin-top: 30px;
+        }
+        .annotations h4 {
+            color: #ffc107;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        .annotation-card {
+            border-left: 4px solid #ffc107;
+            background-color: #333;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        .annotation-card p {
+            color: #ffc107;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+        .annotation-card small {
+            color: #ffcc00 !important;
+            opacity: 0.7;
+            font-size: 0.8rem;
+        }
+
+        .modal-content {
+            background-color: #333;
+            border: 2px solid #ffc107;
+        }
+        .modal-header {
+            border-bottom: 1px solid #ffc107;
+        }
+        .modal-title {
+            color: #ffc107;
+        }
+        .modal-footer {
+            border-top: 1px solid #ffc107;
+        }
+        .btn-close-white {
+            filter: invert(1);
+        }
+        .form-control.bg-secondary {
+            background-color: #555 !important;
+            color: white !important;
+            border: 1px solid #666;
         }
     </style>
 </head>

@@ -67,7 +67,10 @@ def news():
 
 @app.route('/charts')
 def charts():
-    return render_template("charts.html")
+    db_sess = db_session.create_session()
+    top_songs = db_sess.query(Song).order_by(Song.views.desc()).limit(10).all()
+    db_sess.close()
+    return render_template('charts.html', title='Чарты', top_songs=top_songs)
 
 
 @app.route('/song/<int:song_id>')
@@ -77,22 +80,37 @@ def song(song_id):
     if not song:
         flash('Песня не найдена', 'danger')
         return redirect('/')
+
+    song.views = song.views + 1 if song.views else 1
+    db_sess.commit()
+
     return render_template('song.html', song=song)
 
+@app.route('/add_views_field')
+def add_views_field():
+    db_sess = db_session.create_session()
+    songs = db_sess.query(Song).all()
+    for song in songs:
+        if song.views is None:
+            song.views = 0
+    db_sess.commit()
+    return "Поле views добавлено ко всем песням"
 
-@app.route('/song/<int:song_id>/add_annotation', methods=['POST'])
+@app.route('/song/<int:song_id>/add_annotation', methods=['GET', 'POST'])
 @login_required
 def add_annotation(song_id):
-    db_sess = db_session.create_session()
-    annotation = Annotation(
-        text=request.form['annotation_text'],
-        user_id=current_user.id,
-        song_id=song_id,
-        created_at=datetime.utcnow()
-    )
-    db_sess.add(annotation)
-    db_sess.commit()
-    flash('Аннотация добавлена!', 'success')
+    if request.method == 'POST':
+        db_sess = db_session.create_session()
+        annotation = Annotation(
+            text=request.form['annotation_text'],
+            user_id=current_user.id,
+            song_id=song_id,
+            created_at=datetime.utcnow()
+        )
+        db_sess.add(annotation)
+        db_sess.commit()
+        flash('Аннотация добавлена!', 'success')
+        return redirect(url_for('song', song_id=song_id))
     return redirect(url_for('song', song_id=song_id))
 
 

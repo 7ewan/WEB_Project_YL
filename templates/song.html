@@ -2,14 +2,75 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="song-header">
-        <h1>{{ song.title }}</h1>
-        <h3 class="artist-name">{{ song.artist }}</h3>
+    <div class="song-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1>{{ song.title }}</h1>
+            <h3 class="artist-name">{{ song.artist }}</h3>
+        </div>
+        {% if current_user.is_authenticated %}
+        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#annotationModal">
+            Добавить аннотацию
+        </button>
+        {% endif %}
     </div>
     <div class="lyrics-container">
         <div class="lyrics">
             {{ song.lyrics | replace('\n', '<br>') | safe }}
         </div>
+
+        {% if song.annotations %}
+        <div class="annotations mt-4">
+            <h4 class="text-white mb-3">Аннотации:</h4>
+            {% for annotation in song.annotations %}
+            <div class="annotation-card bg-dark p-3 mb-3 rounded">
+                <p class="text-white">{{ annotation.text }}</p>
+                <small class="text-muted">
+                    Добавлено пользователем {{ annotation.user.name }}
+                    {{ annotation.created_at.strftime('%d.%m.%Y %H:%M') }}
+                </small>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 </div>
+
+<!-- Модальное окно для аннотаций -->
+<div class="modal fade" id="annotationModal" tabindex="-1" aria-labelledby="annotationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title" id="annotationModalLabel">Добавить аннотацию</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <form method="POST" action="{{ url_for('add_annotation', song_id=song.id) }}">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <textarea class="form-control bg-secondary text-white"
+                                  name="annotation_text"
+                                  rows="5"
+                                  placeholder="Введите вашу аннотацию..."
+                                  required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-warning">Опубликовать аннотацию</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .annotation-card {
+        border-left: 4px solid #ffc107;
+    }
+    .modal-content {
+        border: 1px solid #ffc107;
+    }
+    .btn-close-white {
+        filter: invert(1);
+    }
+</style>
 {% endblock %}

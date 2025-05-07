@@ -1,6 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Чарты</h2>
-<p>Здесь будут появляться чарты</p>
+<div class="container">
+    <h2 class="mb-4">Топ-10 песен по просмотрам</h2>
+
+    <div class="chart-list">
+        {% for song in top_songs %}
+        <div class="chart-item d-flex align-items-center mb-3 p-3 bg-dark rounded">
+            <div class="chart-position me-3" style="width: 40px;">
+                <span class="fs-4 fw-bold text-warning">{{ loop.index }}</span>
+            </div>
+            <div class="chart-info flex-grow-1">
+                <h5 class="mb-1">{{ song.title }}</h5>
+                <p class="mb-1 text-white">{{ song.artist }}</p>
+            </div>
+            <div class="chart-views">
+                <span class="badge bg-warning text-white">{{ song.views }} просмотров</span>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            Пока нет данных для чартов. Треки еще не просматривались.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .chart-item {
+        transition: transform 0.2s;
+    }
+    .chart-item:hover {
+        transform: translateX(5px);
+        background-color: #9966CC !important;
+    }
+    .chart-position {
+        text-align: center;
+    }
+</style>
 {% endblock %}

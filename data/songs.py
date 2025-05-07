@@ -25,6 +25,7 @@ class Song(SqlAlchemyBase):
     lyrics = Column(Text, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"))
     created_date = Column(DateTime, default=datetime.utcnow)
+    views = Column(Integer, default=0)
 
     user = relationship("User")
     annotations = relationship("Annotation", backref="song", cascade="all, delete-orphan")
