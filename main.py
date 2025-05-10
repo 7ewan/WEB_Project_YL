@@ -1,14 +1,13 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField
-from wtforms.fields.simple import EmailField, BooleanField
-from wtforms.validators import DataRequired
 from data.songs import Song, Annotation
 from data.users import User
+from forms.user import LoginForm, RegisterForm
+from forms.song import SongForm
 from data import db_session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from datetime import datetime
 import re
+import yandex_music
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123'
@@ -16,29 +15,15 @@ app.config['SECRET_KEY'] = '123'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+def find_yandex_track(title, artist):
+    client = yandex_music.Client().init()
+    search_text = f"{artist} {title}"
+    search_result = client.search(search_text)
 
-class LoginForm(FlaskForm):
-    email = EmailField('Почта', validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
-    remember_me = BooleanField('Запомнить меня')
-    submit = SubmitField('Войти')
-
-
-class RegisterForm(FlaskForm):
-    name = StringField('Имя', validators=[DataRequired()])
-    email = EmailField('Почта', validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
-    password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
-    about = TextAreaField('О себе')
-    submit = SubmitField('Зарегистрироваться')
-
-
-class SongForm(FlaskForm):
-    title = StringField('Название', validators=[DataRequired()])
-    artist = StringField('Исполнитель', validators=[DataRequired()])
-    lyrics = TextAreaField('Текст песни', validators=[DataRequired()])
-    submit = SubmitField('Добавить')
-
+    if search_result.best and search_result.best.type == 'track':
+        track = search_result.best.result
+        return track.id, track.albums[0].id
+    return None, None
 
 def censor_vowel_words(text):
     if not text:
@@ -119,13 +104,21 @@ def add_annotation(song_id):
 def add_song():
     form = SongForm()
     if form.validate_on_submit():
+        if form.file.data:
+            file_data = form.file.data.read().decode('utf-8')
+            form.lyrics.data = file_data
+
+        track_id, album_id = find_yandex_track(form.title.data, form.artist.data)
+
         db_sess = db_session.create_session()
         song = Song(
             title=form.title.data,
             artist=form.artist.data,
             lyrics=censor_vowel_words(form.lyrics.data),
             user_id=current_user.id,
-            created_date=datetime.utcnow()
+            created_date=datetime.utcnow(),
+            track_id = track_id,
+            album_id = album_id
         )
         db_sess.add(song)
         db_sess.commit()

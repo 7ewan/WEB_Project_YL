@@ -14,6 +14,7 @@ class Annotation(SqlAlchemyBase):
     song_id = Column(Integer, ForeignKey('songs.id'))
 
     user = relationship("User")
+    song = relationship("Song", back_populates="annotations")
 
 
 class Song(SqlAlchemyBase):
@@ -23,9 +24,12 @@ class Song(SqlAlchemyBase):
     title = Column(String, nullable=False)
     artist = Column(String, nullable=False)
     lyrics = Column(Text, nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey('users.id'))
     created_date = Column(DateTime, default=datetime.utcnow)
     views = Column(Integer, default=0)
 
-    user = relationship("User")
-    annotations = relationship("Annotation", backref="song", cascade="all, delete-orphan")
+    track_id = Column(Integer)
+    album_id = Column(Integer)
+
+    user = relationship('User')
+    annotations = relationship('Annotation', back_populates='song')

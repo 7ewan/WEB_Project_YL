@@ -2,7 +2,7 @@
 
 {% block content %}
     <h2>Добавить текст песни</h2>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <div class="mb-3">
             {{ form.title.label }} {{ form.title(class="form-control") }}
@@ -11,8 +11,28 @@
             {{ form.artist.label }} {{ form.artist(class="form-control") }}
         </div>
         <div class="mb-3">
-            {{ form.lyrics.label }} {{ form.lyrics(class="form-control", rows="10") }}
+            {{ form.lyrics.label }} {{ form.lyrics(class="form-control", rows="10", id="lyrics") }}
+        </div>
+        <div class="mb-3">
+            {{ form.file.label }} {{ form.file(class="form-control", id="fileInput") }}
+            <div class="form-text">Загрузите .txt файл с текстом песни</div>
         </div>
         {{ form.submit(class="btn btn-success") }}
     </form>
+
+    <script>
+        // JS для автозагрузки текста из файла в textarea
+        document.getElementById('fileInput').addEventListener('change', function(){
+            const file = this.files[0];
+            if (file && file.type === 'text/plain') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('lyrics').value = e.target.result;
+                };
+                reader.readAsText(file, 'UTF-8');
+            } else {
+                alert('Пожалуйста, выберите .txt файл');
+            }
+        });
+    </script>
 {% endblock %}

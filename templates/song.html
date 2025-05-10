@@ -13,10 +13,20 @@
         </button>
         {% endif %}
     </div>
+
     <div class="lyrics-container">
         <div class="lyrics">
             {{ song.lyrics | replace('\n', '<br>') | safe }}
         </div>
+
+        {% if song.track_id and song.album_id %}
+        <div class="yandex-player mt-4">
+            <h4 class="text-white mb-3">Оригинал трека на Яндекс Музыке:</h4>
+            <iframe frameborder="0" style="border:none;width:100%;max-width:540px;height:150px;"
+                src="https://music.yandex.ru/iframe/#track/{{ song.track_id }}/{{ song.album_id }}">
+            </iframe>
+        </div>
+        {% endif %}
 
         {% if song.annotations %}
         <div class="annotations mt-4">
@@ -35,7 +45,6 @@
     </div>
 </div>
 
-<!-- Модальное окно для аннотаций -->
 <div class="modal fade" id="annotationModal" tabindex="-1" aria-labelledby="annotationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content bg-dark text-white">
