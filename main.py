@@ -8,12 +8,17 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from datetime import datetime
 import re
 import yandex_music
+import random
+from sqlalchemy import func
+from seed_data import seed_test_data
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
 
 def find_yandex_track(title, artist):
     client = yandex_music.Client().init()
@@ -25,11 +30,18 @@ def find_yandex_track(title, artist):
         return track.id, track.albums[0].id
     return None, None
 
+
 def censor_vowel_words(text):
     if not text:
         return text
+    replacement_words = ['СВАГА', 'ДРИПЧИК', 'МАЙОНЕЗ', 'КАРТЕЛЬ', 'ЧУВАААААК']
     vowel_pattern = r'(^|\s)([ауоиэыяюеёАУОИЭЫЯЮЕЁaeiouyAEIOUY]\w*)'
-    return re.sub(vowel_pattern, r'\1#$@%', text, flags=re.IGNORECASE | re.UNICODE)
+
+    def replace_match(match):
+        replacement = random.choice(replacement_words)
+        return match.group(1) + replacement
+
+    return re.sub(vowel_pattern, replace_match, text, flags=re.IGNORECASE | re.UNICODE)
 
 
 def get_recent_songs(limit=6):
@@ -39,10 +51,23 @@ def get_recent_songs(limit=6):
     return songs
 
 
+def get_top_users(limit=5):
+    db_sess = db_session.create_session()
+    top_users = db_sess.query(User, func.count(Annotation.id).label('annotation_count')) \
+        .join(Annotation, User.id == Annotation.user_id) \
+        .group_by(User.id) \
+        .order_by(func.count(Annotation.id).desc()) \
+        .limit(limit) \
+        .all()
+    db_sess.close()
+    return top_users
+
+
 @app.route('/')
 def index():
     songs = get_recent_songs()
-    return render_template('index.html', title='Главная страница', songs=songs)
+    top_users = get_top_users()
+    return render_template('index.html', title='Главная страница', songs=songs, top_users=top_users)
 
 
 @app.route('/news')
@@ -71,6 +96,7 @@ def song(song_id):
 
     return render_template('song.html', song=song)
 
+
 @app.route('/add_views_field')
 def add_views_field():
     db_sess = db_session.create_session()
@@ -80,6 +106,7 @@ def add_views_field():
             song.views = 0
     db_sess.commit()
     return "Поле views добавлено ко всем песням"
+
 
 @app.route('/song/<int:song_id>/add_annotation', methods=['GET', 'POST'])
 @login_required
@@ -117,8 +144,8 @@ def add_song():
             lyrics=censor_vowel_words(form.lyrics.data),
             user_id=current_user.id,
             created_date=datetime.utcnow(),
-            track_id = track_id,
-            album_id = album_id
+            track_id=track_id,
+            album_id=album_id
         )
         db_sess.add(song)
         db_sess.commit()
@@ -199,4 +226,5 @@ def logout():
 
 if __name__ == '__main__':
     db_session.global_init('db/users.db')
+    seed_test_data()
     app.run(port=8080, host='127.0.0.1', debug=True)

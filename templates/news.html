@@ -1,6 +1,73 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Новости</h2>
-<p>Здесь будут появляться новости</p>
+<div class="container news-container">
+    <h2 class="text-center mb-5">НОВОСТИ</h2>
+
+    <div class="row news-item align-items-center mb-5">
+        <div class="col-md-6">
+            <h3>ТОКСИС ИЗУЧИЛ АЙСБЕРГ САУНДКЛАУДА И ПОНЯЛ ЧТО ОН.........ЛЯГУШКА</h3>
+            <p>Подробное исследование творчества Токсиса и его неожиданные выводы о природе саундклауд-рэпа...</p>
+            <a href="#" class="read-more">читать далее...</a>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="{{ url_for('static', filename='images/news1.jpg') }}" alt="Новость 1" class="img-fluid news-image">
+        </div>
+    </div>
+
+    <div class="row news-item align-items-center mb-5">
+        <div class="col-md-6 order-md-2">
+            <h3>НОВЫЙ ИГРОК НА ОТЕЧЕСТВЕННОЙ РЕП СЦЕНЕ , КТО ЖЕ ОН???</h3>
+            <p>Кто этот таинственный исполнитель, взорвавший чарты на прошлой неделе? Все подробности...</p>
+            <a href="#" class="read-more">читать далее...</a>
+        </div>
+        <div class="col-md-6 order-md-1 text-center">
+            <img src="{{ url_for('static', filename='images/news2.jpg') }}" alt="Новость 2" class="img-fluid news-image">
+        </div>
+    </div>
+
+    <div class="row news-item align-items-center mb-5">
+        <div class="col-md-6">
+            <h3>CАЙТ NON-GENIUS ПРИНИЖАЕТ ФАНАТОВ МАКАНА? ЭТО ДЕЙСТВИТЕЛЬНО ДОСТОЙНО УВАЖЕНИЯ</h3>
+            <p>Скандальное заявление представителей сайта и реакция фанатов. Что на самом деле произошло...</p>
+            <a href="#" class="read-more">читать далее...</a>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="{{ url_for('static', filename='images/news3.jpg') }}" alt="Новость 3" class="img-fluid news-image">
+        </div>
+    </div>
+
+    <div class="row news-item align-items-center mb-5">
+        <div class="col-md-6 order-md-2">
+            <h3>КРОШ ИЗ СМЕШАРИКОВ ВЫПУСТИЛ НОВУЮ ПЕСНЮ ПРО СВАГУ, ЧТООО???</h3>
+            <p>Неожиданный поворот в карьере мультяшного героя. Слушаем трек и разбираем текст...</p>
+            <a href="#" class="read-more">читать далее...</a>
+        </div>
+        <div class="col-md-6 order-md-1 text-center">
+            <img src="{{ url_for('static', filename='images/news4.png') }}" alt="Новость 4" class="img-fluid news-image">
+        </div>
+    </div>
+
+    <div class="row news-item align-items-center mb-5">
+        <div class="col-md-6">
+            <h3>НЮША ИЗ СМЕШАРИКОВ ОТРЕАГИРОВАЛА НА НОВУЮ ПЕСНЮ КРОША</h3>
+            <p>Эксклюзивное интервью с Нюшей о новом треке Кроша и возможном сотрудничестве...</p>
+            <a href="#" class="read-more">читать далее...</a>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="{{ url_for('static', filename='images/news5.jpg') }}" alt="Новость 5" class="img-fluid news-image">
+        </div>
+    </div>
+
+    <div class="row news-item align-items-center mb-5">
+        <div class="col-md-6 order-md-2">
+            <h3>СОЗДАТЕЛИ САЙТА NON-GENIUS КРУТЫЕ РЕБЯТА ДОСТОЙНЫЕ УВАЖЕНИЯ!!!</h3>
+            <p>Эксклюзивное интервью с разработчиками самого обсуждаемого музыкального ресурса...</p>
+            <a href="#" class="read-more">читать далее...</a>
+        </div>
+        <div class="col-md-6 order-md-1 text-center">
+            <img src="{{ url_for('static', filename='images/news6.jpg') }}" alt="Новость 6" class="img-fluid news-image">
+        </div>
+    </div>
+</div>
 {% endblock %}
