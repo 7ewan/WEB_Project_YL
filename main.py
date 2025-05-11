@@ -7,6 +7,8 @@ from data import db_session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from datetime import datetime
 import re
+from flask_restful import Api
+from song_api import SongFullSearchResource
 import yandex_music
 import random
 from sqlalchemy import func
@@ -18,6 +20,7 @@ app.config['SECRET_KEY'] = '123'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+api = Api(app)
 
 
 def find_yandex_track(title, artist):
@@ -223,6 +226,7 @@ def logout():
     logout_user()
     return redirect("/")
 
+api.add_resource(SongFullSearchResource, '/api/full_song_search')
 
 if __name__ == '__main__':
     db_session.global_init('db/users.db')
