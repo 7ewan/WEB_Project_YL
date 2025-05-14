@@ -8,6 +8,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from datetime import datetime
 import re
 from flask_restful import Api
+from web_song_api import SongListResource, SongResource
 from song_api import SongFullSearchResource
 import yandex_music
 import random
@@ -227,6 +228,9 @@ def logout():
     return redirect("/")
 
 api.add_resource(SongFullSearchResource, '/api/full_song_search')
+api.add_resource(SongListResource, '/api/song')
+api.add_resource(SongResource, '/api/song/<int:song_id>')
+
 
 if __name__ == '__main__':
     db_session.global_init('db/users.db')
